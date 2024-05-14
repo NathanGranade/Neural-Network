@@ -1,7 +1,9 @@
 package neuralNetwork;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -405,6 +407,7 @@ public class NeuralNetwork
         
         // Print first set of menu options
         System.out.println("[1] Train the network\n");
+        System.out.println("[2] Load a pre-trained network\n");
         System.out.println("[0] Exit the program\n");
         
         // Get and store user input
@@ -445,6 +448,7 @@ public class NeuralNetwork
             System.out.println("[4] Display network accuracy on TESTING data\n");
             System.out.println("[5] Run network on TESTING data showing images and labels\n");
             System.out.println("[6] Display the misclassified TESTING images\n");
+            System.out.println("[7] Save the network state to file\n");
             System.out.println("[0] Exit the program\n");
             
             // Get and store user input

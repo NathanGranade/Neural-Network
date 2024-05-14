@@ -1,7 +1,9 @@
 package neuralNetwork;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class NeuralNetwork
+public class NeuralNetwork 
 {
 	// Initialize variables for node sizes, learning rate, weights, biases, hidden, and output layer
     private int inputSize;
@@ -86,6 +88,7 @@ public class NeuralNetwork
     private void shuffleData(double[][] input, double[][] output) 
     {
         int n = input.length;
+        int m = output.length;
         Random rand = new Random();
         
         for (int i = n - 1; i > 0; i--) 
@@ -95,6 +98,10 @@ public class NeuralNetwork
             double[] tempInput = input[i];
             input[i] = input[j];
             input[j] = tempInput;
+        }
+        for (int i = m - 1; i > 0; i--)
+        {
+        	int j = rand.nextInt(i + 1);
             // Swap output
             double[] tempOutput = output[i];
             output[i] = output[j];
@@ -367,20 +374,23 @@ public class NeuralNetwork
     {
     	//////////////////////////////////////////////////////////////////////////////////////////////
     	/*
-    	 * 
+    	Name: Nathan Granade
+    	CWID: 102-64-537
+    	Data: 10/25/2023
+        Assignment #2
+
     	This program implements a 3-layer fully connected neural network
     	using the process of feed forward, stochastic gradient descent, and back propagation.
     	After being trained on the MNIST training dataset, this program should be able to recognize 
     	hand written digits 0-9 using the MNIST testing dataset with above 90% accuracy.
-    	
     	*/
     	//////////////////////////////////////////////////////////////////////////////////////////////
     	 
     	// Initializes number of nodes on each layer, learning rate, batch size, and epochs
         int inputSize = 784;
-        int hiddenSize = 50;
+        int hiddenSize = 30;
         int outputSize = 10;
-        double ETA = 1;
+        double ETA = 3;
         int batchSize = 10;
         int epochs = 30;
         
@@ -405,6 +415,7 @@ public class NeuralNetwork
         
         // Print first set of menu options
         System.out.println("[1] Train the network\n");
+        System.out.println("[2] Load a pre-trained network\n");
         System.out.println("[0] Exit the program\n");
         
         // Get and store user input
@@ -418,6 +429,46 @@ public class NeuralNetwork
         	neuralNetwork.train(trainingInput, trainingOutput, epochs, batchSize);
             
             System.out.println("Training Complete.\n");
+        }
+        // If user input = 2, run second menu option (load pre-trained network)
+        
+        else if(choice == 2)
+        {
+        	// Load weights file from predetermined location
+        	String weightsHiddenFile = "MNIST/weights.txt";
+        	BufferedReader reader = new BufferedReader(new FileReader(weightsHiddenFile));
+        	String line = "";
+        	int row = 0;
+        	// Read each line into a double[][] to hold the hidden layer weights
+        	while((line = reader.readLine()) != null && row < neuralNetwork.weightsHidden.length)
+        	{
+        		String[] cols = line.split(",");
+        		int col = 0;
+        		for(String  c : cols)
+        		{
+        			neuralNetwork.weightsHidden[row][col] = Double.parseDouble(c);
+        			col++;
+        		}
+        		row++;
+        	}
+        
+        	row = 0;
+        	// Read each line into a double[][] to hold the output layer weights
+        	while((line = reader.readLine()) != null)
+        	{
+        		String[] cols = line.split(",");
+        		int col = 0;
+        		for(String  c : cols)
+        		{
+        			neuralNetwork.weightsOutput[row][col] = Double.parseDouble(c);
+        			col++;
+        		}
+        		row++;
+        	}
+        	// Close the reader object
+        	reader.close();
+        	
+        	System.out.println("Weights loaded successfully.\n");
         }
         
         // If user input = 0, exit program.
@@ -445,6 +496,7 @@ public class NeuralNetwork
             System.out.println("[4] Display network accuracy on TESTING data\n");
             System.out.println("[5] Run network on TESTING data showing images and labels\n");
             System.out.println("[6] Display the misclassified TESTING images\n");
+            System.out.println("[7] Save the network state to file\n");
             System.out.println("[0] Exit the program\n");
             
             // Get and store user input
@@ -628,7 +680,45 @@ public class NeuralNetwork
                 }
             	break;
             	
-            
+            // If user input = 7, run seventh menu option (save current weights to a file) 
+            case 7:
+            	// Create new file using File object
+            	File output = new File("MNIST/weights.txt");
+        		if (output.createNewFile())
+        		{
+        			System.out.println("File created: " + output.getName() + "\n");
+        		}
+        		FileWriter write = new FileWriter("MNIST/weights.txt");
+        		
+        		// Store weights as a simulated CSV, using commas to separate each value
+        		StringBuilder builder = new StringBuilder();
+        		for(int i = 0; i < neuralNetwork.weightsHidden.length; i++)
+        		{
+        			for(int j = 0; j < neuralNetwork.weightsHidden[i].length; j++)
+        			{
+        				builder.append(neuralNetwork.weightsHidden[i][j]+"");
+        				if(j < neuralNetwork.weightsHidden.length - 1)
+        					builder.append(",");
+        			}
+        			builder.append("\n");
+        		}
+        		for(int i = 0; i < neuralNetwork.weightsOutput.length; i++)
+        		{
+        			for(int j = 0; j < neuralNetwork.weightsOutput[i].length; j++)
+        			{
+        			   builder.append(neuralNetwork.weightsOutput[i][j]+"");
+        			   if(j < neuralNetwork.weightsOutput.length - 1)
+        				   builder.append(",");
+        			}
+        			builder.append("\n");
+        		}
+        		
+        		// Write the entire string to the file created above
+        		write.write(builder.toString());
+        		write.close();
+        		System.out.println("Weights saved successfully.\n");
+
+            	break;
             	
             // If user input = 0, exit program.
             case 0:
