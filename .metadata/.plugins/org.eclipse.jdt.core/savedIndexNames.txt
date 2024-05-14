@@ -1,0 +1,4 @@
+INDEX VERSION 1.134+C:\Users\rcpot\Dropbox\School\Fall 23\CSC 475\NeuralNetwork\.metadata\.plugins\org.eclipse.jdt.core
+2820624173.index
+469784366.index
+1865797976.index
